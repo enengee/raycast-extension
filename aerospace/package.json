@@ -1,0 +1,67 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "raycast-aerospace",
+  "title": "AeroSpace",
+  "description": "Move windows between AeroSpace workspaces and switch workspaces, right from Raycast.",
+  "icon": "extension-icon.png",
+  "author": "enengee",
+  "categories": ["Productivity", "System"],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "move-window-to-workspace",
+      "title": "Move Window to Workspace",
+      "subtitle": "AeroSpace",
+      "description": "Pick or create a workspace to move the focused window to.",
+      "mode": "view"
+    },
+    {
+      "name": "switch-to-workspace",
+      "title": "Switch to Workspace",
+      "subtitle": "AeroSpace",
+      "description": "Fuzzy-search your workspaces and switch to one.",
+      "mode": "view"
+    },
+    {
+      "name": "rename-workspace",
+      "title": "Rename Current Workspace",
+      "subtitle": "AeroSpace",
+      "description": "Rename the focused workspace by moving its windows to a new name.",
+      "mode": "view"
+    },
+    {
+      "name": "summon-workspace",
+      "title": "Bring Workspace to This Monitor",
+      "subtitle": "AeroSpace",
+      "description": "Summon a workspace (by name) to the currently focused monitor.",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "aerospacePath",
+      "title": "AeroSpace Binary Path",
+      "description": "Full path to the aerospace binary. Run 'which aerospace' to find it.",
+      "type": "textfield",
+      "required": false,
+      "default": "/opt/homebrew/bin/aerospace"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.80.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.11",
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.3.3",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix"
+  }
+}
