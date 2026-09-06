@@ -1,4 +1,4 @@
-# raycast-aerospace
+# AeroSpace
 
 This is a Raycast extension for the [AeroSpace](https://github.com/nikitabobko/AeroSpace) tiling
 window manager. The extension gives you four commands. You can move a window, switch a workspace,
