@@ -35,9 +35,11 @@ This command moves the focused window to a workspace.
 3. Press **Enter** to move the window and switch to the workspace.
 4. Or press **Cmd+Enter** to move the window and stay on the current workspace.
 
-The extension identifies the window by its id. The move is correct even when Raycast takes the
-focus. If AeroSpace reports Raycast as the focused window, the extension closes Raycast first. Then
-the extension moves the window.
+The extension identifies the window by its id, so the move is correct even when
+Raycast takes the focus. It records the id when the command opens. If AeroSpace
+reported Raycast as the focused window instead, the extension closes Raycast,
+waits for focus to return to the real window, then re-reads the id — so the move
+always targets an explicit window id and never acts on transient focus.
 
 ### Switch to Workspace
 
