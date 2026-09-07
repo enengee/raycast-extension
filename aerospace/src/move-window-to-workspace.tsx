@@ -6,6 +6,7 @@ import {
   showToast,
   Toast,
   showHUD,
+  popToRoot,
 } from "@raycast/api";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -102,6 +103,13 @@ export default function Command() {
           ? `Moved & switched to "${target}"`
           : `Moved window to "${target}"`,
       );
+      // The view's own data goes stale for the same reason the window id did: the
+      // component survives between invocations, so the workspace list, the window
+      // counts and the "current" tag would all still be from the first press of
+      // the session. Popping to root drops the view so the next press mounts
+      // fresh. The id above is resolved live regardless — this is about what the
+      // list SHOWS, not about which window moves.
+      await popToRoot({ clearSearchBar: true });
     } catch (e) {
       await showToast({
         style: Toast.Style.Failure,
