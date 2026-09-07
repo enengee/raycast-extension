@@ -6,8 +6,6 @@ import {
   showToast,
   Toast,
   showHUD,
-  closeMainWindow,
-  PopToRootType,
 } from "@raycast/api";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -77,16 +75,14 @@ export default function Command() {
     // The mount-time capture remains only as a fallback for the case the original
     // code guarded against, where AeroSpace does report Raycast as focused.
     const live = await getFocusedWindow();
-    let id = live.id ?? focused.id;
-    if (!id) {
-      await closeMainWindow({ popToRootType: PopToRootType.Immediate });
-      // closeMainWindow resolves when the close is requested, not when focus has
-      // settled; give macOS/AeroSpace a beat, then read the now-focused window.
-      await new Promise((r) => setTimeout(r, 120));
-      id = (await getFocusedWindow()).id;
-    }
+    const id = live.id ?? focused.id;
 
     if (!id) {
+      // Deliberately no "close Raycast, wait 120ms, ask again" fallback here. That
+      // path read focus back *after* macOS had restored it, and macOS restores an
+      // app's most recently fronted window rather than the one that was focused —
+      // a second way to grab an unintended window. Failing visibly is better than
+      // silently moving the wrong one.
       await showToast({
         style: Toast.Style.Failure,
         title: "No window to move",
