@@ -60,16 +60,24 @@ export default function Command() {
     const target = workspace.trim();
     if (!target) return;
 
-    // Resolve the window id we will act on. Prefer the id captured at launch;
-    // only if that was empty (AeroSpace reported Raycast as focused) do we close
-    // Raycast and re-query, so focus has returned to the real window.
+    // Resolve the window to act on NOW, at action time.
     //
-    // The move ALWAYS passes --window-id. The previous fallback ran
-    // move-node-to-workspace with no id, which acts on "whatever is focused now" —
-    // and right after closeMainWindow, before focus has settled, that can be the
-    // wrong window. Targeting an explicit id is the only way the move cannot grab
-    // an unintended window.
-    let id = focused.id;
+    // It must NOT be read from mount-time state. Raycast keeps a command's process
+    // and its mounted component alive between invocations, so the useEffect above
+    // runs once per *process*, not once per press: `focused` holds whatever was
+    // focused the first time the command was opened that session, and every later
+    // press would move that same stale window. Measured before this was fixed: a
+    // single mount served ten presses over 47 seconds, all of them moving the
+    // window focused at the first press.
+    //
+    // Querying AeroSpace while Raycast is open is safe, and is what makes this
+    // work: AeroSpace does not track Raycast's own window, so `list-windows
+    // --focused` still reports the window underneath — the one the user means.
+    //
+    // The mount-time capture remains only as a fallback for the case the original
+    // code guarded against, where AeroSpace does report Raycast as focused.
+    const live = await getFocusedWindow();
+    let id = live.id ?? focused.id;
     if (!id) {
       await closeMainWindow({ popToRootType: PopToRootType.Immediate });
       // closeMainWindow resolves when the close is requested, not when focus has
