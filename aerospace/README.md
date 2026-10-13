@@ -46,8 +46,9 @@ always targets an explicit window id and never acts on transient focus.
 This command switches to a workspace.
 
 1. Start the command.
-2. Type text to filter the list. The filter matches the workspace name and the applications in the
-   workspace. For example, type `chrome` to find the workspace that runs Google Chrome.
+2. Type text to filter the list. The filter matches only the workspace name. The best match is
+   first: an exact match, then a prefix, then a word prefix, then any substring, then letters in
+   order.
 3. Press **Enter** to switch to the selected workspace.
 
 ### Rename Current Workspace
@@ -69,8 +70,8 @@ This command moves a workspace to the focused monitor. Use this command when you
 monitor.
 
 1. Start the command.
-2. Type text to filter the list. The filter matches the workspace name and the applications in the
-   workspace.
+2. Type text to filter the list. The filter matches only the workspace name. The order of the
+   results is the same as in Switch to Workspace.
 3. Press **Enter**. AeroSpace moves the workspace to the current monitor.
 
 ## Workspace List

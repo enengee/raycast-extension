@@ -1,6 +1,6 @@
 import { List, ActionPanel, Action, Icon, showToast, Toast, showHUD } from "@raycast/api";
 import { useEffect, useMemo, useState } from "react";
-import { aero, fuzzyMatch, getWorkspaceData, sortByWindowsThenName } from "./lib/aerospace";
+import { aero, getWorkspaceData, rankWorkspaces, sortByWindowsThenName } from "./lib/aerospace";
 
 export default function Command() {
   const [workspaces, setWorkspaces] = useState<string[]>([]);
@@ -28,16 +28,7 @@ export default function Command() {
 
   const sorted = useMemo(() => sortByWindowsThenName(workspaces, windowCounts), [workspaces, windowCounts]);
 
-  // Manual fuzzy filtering over the workspace name AND the apps open in it, so
-  // "tst" matches the "test" workspace and "chrome" matches a workspace running
-  // Google Chrome.
-  const query = searchText.trim();
-  const filtered = useMemo(() => {
-    if (!query) return sorted;
-    return sorted.filter(
-      (w) => fuzzyMatch(query, w) || (appsByWorkspace[w] ?? []).some((app) => fuzzyMatch(query, app)),
-    );
-  }, [sorted, appsByWorkspace, query]);
+  const filtered = useMemo(() => rankWorkspaces(searchText, sorted), [sorted, searchText]);
 
   async function switchTo(workspace: string) {
     try {
@@ -54,7 +45,7 @@ export default function Command() {
       filtering={false}
       searchText={searchText}
       onSearchTextChange={setSearchText}
-      searchBarPlaceholder="Switch to workspace (matches name or app)…"
+      searchBarPlaceholder="Switch to workspace…"
     >
       {filtered.map((w) => {
         const apps = appsByWorkspace[w] ?? [];

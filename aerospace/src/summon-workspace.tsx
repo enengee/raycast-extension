@@ -1,6 +1,6 @@
 import { List, ActionPanel, Action, Icon, showToast, Toast, showHUD } from "@raycast/api";
 import { useEffect, useMemo, useState } from "react";
-import { aero, fuzzyMatch, getFocusedMonitor, getWorkspaceData, sortByWindowsThenName } from "./lib/aerospace";
+import { aero, getFocusedMonitor, getWorkspaceData, rankWorkspaces, sortByWindowsThenName } from "./lib/aerospace";
 
 export default function Command() {
   const [workspaces, setWorkspaces] = useState<string[]>([]);
@@ -30,13 +30,7 @@ export default function Command() {
 
   const sorted = useMemo(() => sortByWindowsThenName(workspaces, windowCounts), [workspaces, windowCounts]);
 
-  const query = searchText.trim();
-  const filtered = useMemo(() => {
-    if (!query) return sorted;
-    return sorted.filter(
-      (w) => fuzzyMatch(query, w) || (appsByWorkspace[w] ?? []).some((app) => fuzzyMatch(query, app)),
-    );
-  }, [sorted, appsByWorkspace, query]);
+  const filtered = useMemo(() => rankWorkspaces(searchText, sorted), [sorted, searchText]);
 
   async function summon(workspace: string) {
     try {

@@ -92,16 +92,35 @@ export function sortByWindowsThenName(workspaces: string[], windowCounts: Record
   });
 }
 
-/** Case-insensitive subsequence match: the characters of `query` appear in order in `target`. */
-export function fuzzyMatch(query: string, target: string): boolean {
-  const q = query.toLowerCase();
-  const t = target.toLowerCase();
-  if (!q) return true;
+function isSubsequence(q: string, t: string): boolean {
   let i = 0;
   for (let j = 0; j < t.length && i < q.length; j++) {
     if (t[j] === q[i]) i++;
   }
   return i === q.length;
+}
+
+export function matchScore(query: string, target: string): number {
+  const q = query.toLowerCase();
+  const t = target.toLowerCase();
+  if (t === q) return 5;
+  if (t.startsWith(q)) return 4;
+  let idx = t.indexOf(q);
+  if (idx < 0) return isSubsequence(q, t) ? 1 : 0;
+  for (; idx >= 0; idx = t.indexOf(q, idx + 1)) {
+    if (/[\s\-_./]/.test(t[idx - 1])) return 3;
+  }
+  return 2;
+}
+
+export function rankWorkspaces(query: string, workspaces: string[]): string[] {
+  const q = query.trim();
+  if (!q) return workspaces;
+  return workspaces
+    .map((w) => ({ w, score: matchScore(q, w) }))
+    .filter((r) => r.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .map((r) => r.w);
 }
 
 /** Name of the currently focused monitor (e.g. "Built-in Retina Display"), or null. */
